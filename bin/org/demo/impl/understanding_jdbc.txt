@@ -1,0 +1,38 @@
+DB changes in websphere:
+
+1.	Create J2C authentication data
+Global security > JAAS - J2C authentication data >
+
+Alias	User ID	Password	Description
+FinancialProfilesDataSource	AgmrService	Nc2agmr@12!	Nc2agmr@12!
+
+1.	Create JDBC Providers
+Resources- JDBC Providers – New
+Database Type	Provider Type	Name	Implementation Type	Class path
+SQL Server	Microsoft SQL Server  JDBC Driver	Microsoft SQL Server JDBC Driver	Connection pool datasource	${MICROSOFT_JDBC_DRIVER_PATH}/sqljdbc4.jar
+
+
+2.	Create Data sources
+Data source name	JNDI name	Database name	Port number	Server name
+financialProfilesDataSource	jdbc/FinancialProfilesDataSource	Lincoln_Data	50856	NC2DWCSQL1504
+
+Component-managed authentication alias
+<Machine>/ FinancialProfilesDataSource
+
+-----------------------------------------------------------------------
+
+
+<jee:jndi-lookup jndi-name="jdbc/FPAGMRDataSource" id="fpAgmrDatasource"/>
+
+
+<bean id="agmrJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<constructor-arg ref="agmrDatasource" />
+		<property name="fetchSize" value="5000" />
+	</bean>
+
+	
+	<bean id="agentJDBCTemplate"
+		class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
+		<constructor-arg ref="agmrJdbcTemplate" />
+	</bean>
+	
